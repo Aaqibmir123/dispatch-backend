@@ -92,6 +92,15 @@ exports.login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    // set HttpOnly cookie with the token (secure in production)
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    };
+
+    res.cookie('token', token, cookieOptions);
     res.json({
       success: true,
       message: "Login successful",
@@ -108,5 +117,16 @@ exports.login = async (req, res) => {
       success: false,
       message: error.message || "Server error during login" 
     });
+  }
+};
+
+// LOGOUT - clear auth cookie
+exports.logout = async (req, res) => {
+  try {
+    res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
+    res.json({ success: true, message: 'Logged out' });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ success: false, message: 'Logout failed' });
   }
 };
