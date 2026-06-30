@@ -14,7 +14,7 @@ connectDB();
 
 // 2. 🔥 CORE CORS MIDDLEWARE (MUST BE ON TOP OF EVERYTHING)
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "*", // Allow all origins for now - can be restricted to specific domains in production
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // ✅ FIXED: Added 'PATCH' because status change uses PATCH
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -23,9 +23,9 @@ app.use(cors({
 // 3. 🔥 STRATEGIC OPTIONS OVERRIDE (Moved up before parsing layers)
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Headers", "Content-Type", "Authorization");
     res.header("Access-Control-Allow-Credentials", "true");
     return res.sendStatus(200);
   }
