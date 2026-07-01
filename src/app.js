@@ -7,6 +7,7 @@ const authRoutes = require("./routes/auth.routes");
 const invoiceRoutes = require("./routes/invoice.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
 const connectDB = require("./config/db");
+const companyRoutes = require("./routes/companyRoutes");
 
 const app = express();
 
@@ -42,5 +43,6 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/company", companyRoutes);
 
 module.exports = app;
