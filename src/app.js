@@ -5,6 +5,7 @@ const morgan = require("morgan");
 
 const authRoutes = require("./routes/auth.routes");
 const invoiceRoutes = require("./routes/invoice.routes");
+const dashboardRoutes = require("./routes/dashboard.routes");
 const connectDB = require("./config/db");
 
 const app = express();
@@ -40,5 +41,6 @@ app.use(morgan("dev"));
 // 5. APPLICATION API ROUTES
 app.use("/api/auth", authRoutes);
 app.use("/api/invoices", invoiceRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 module.exports = app;

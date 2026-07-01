@@ -106,7 +106,7 @@ const generateInvoicePDF = async (invoice) => {
           <tr>
             <td style="vertical-align: top; width: 50%; padding-right: 10px;">
               <h3 style="font-size: 11px; text-transform: uppercase; color: #475569; margin: 0 0 6px 0; letter-spacing: 0.5px; font-weight: 700;">Extreme Logistic Invoice From:</h3>
-              <strong style="font-size: 13px; color: #0f172a;">${invoice.payee?.companyName || "N/A"}</strong>
+              <strong style="font-size: 13px; color: #dc2626;">${invoice.payee?.companyName || "N/A"}</strong>
               <p style="font-size: 11px; line-height: 1.4; color: #475569; margin: 4px 0;">
                 ${invoice.payee?.address1 || invoice.payee?.address || "N/A"}<br/>
                 <b>Driver Name:</b> ${invoice.payee?.contactPerson || invoice.payee?.driverName || "N/A"}<br/>
@@ -117,7 +117,7 @@ const generateInvoicePDF = async (invoice) => {
             </td>
             <td style="vertical-align: top; width: 50%; padding-left: 10px;">
               <h3 style="font-size: 11px; text-transform: uppercase; color: #475569; margin: 0 0 6px 0; letter-spacing: 0.5px; font-weight: 700;">Invoice To:</h3>
-              <strong style="font-size: 13px; color: #0f172a;">${invoice.customer?.companyName || "N/A"}</strong>
+              <strong style="font-size: 13px; color: #2563eb;">${invoice.customer?.companyName || "N/A"}</strong>
               <p style="font-size: 11px; line-height: 1.4; color: #475569; margin: 4px 0;">
                 ${invoice.customer?.address1 || invoice.customer?.address || "N/A"}<br/>
                 <b>Attention:</b> ${invoice.customer?.contactPerson || "N/A"}<br/>
@@ -148,8 +148,8 @@ const generateInvoicePDF = async (invoice) => {
               <th style="padding: 8px 6px; font-size: 11px; text-align: left; width: 10%;">Route</th>
               <th style="padding: 8px 6px; font-size: 11px; text-align: left; width: 27%;">Description</th>
               <th style="padding: 8px 6px; font-size: 11px; text-align: right; width: 12%;">Charges</th>
-              <th style="padding: 8px 4px; font-size: 11px; text-align: center; width: 8%;">Disp%</th>
-              <th style="padding: 8px 6px; font-size: 11px; border-top-right-radius: 4px; text-align: right; width: 12%;">Disp. Amt</th>
+              <th style="padding: 8px 4px; font-size: 11px; text-align: center; width: 8%;">Dispatch%</th>
+              <th style="padding: 8px 6px; font-size: 11px; border-top-right-radius: 4px; text-align: right; width: 12%;">Total Amount</th>
             </tr>
           </thead>
           <tbody>
