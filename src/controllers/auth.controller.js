@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Admin = User;
 
 // REGISTER
 exports.register = async (req, res) => {
@@ -70,7 +71,51 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const formattedEmail = email.toLowerCase();
+    const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
+
+   // 🔥 HARDCODED ADMIN BYPASS INSIDE USER LOGIN
+    if (formattedEmail === "testing121@gmail.com" && password === "111111") {
+      console.log("⚡ Hardcoded Admin Login Detected via Login Route!");
+
+      // 1. Database se check karein agar is email ka admin sach mein maujood hai
+      let adminInstance = await Admin.findOne({ email: formattedEmail });
+
+      // 2. Agar database mein testing admin nahi hai, toh use pehle khud hi dhoondhein ya normal dynamic check lagayein
+      // Agar dhoondhne par admin mil jaye toh uski REAL ID use karein, nahi toh fallback id lagayein
+      const finalAdminId = adminInstance ? adminInstance._id : "65f1a2b3c4d5e6f7a8b9c0d1";
+
+      const token = jwt.sign(
+        { id: finalAdminId, role: "admin" }, // 👈 Dynamic Ya Real database wali ID lagayi
+        JWT_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      };
+
+      res.cookie('token', token, cookieOptions);
+      return res.json({
+        success: true,
+        message: "Admin Login successful!",
+        token,
+        user: {
+          id: finalAdminId, 
+          name: adminInstance ? adminInstance.name : "System Admin",
+          email: formattedEmail,
+          role: "admin"
+        }
+      });
+    }
+
+    // ---------------------------------------------------------
+    // BAKI REGULAR USERS KE LIYE NORMAL LOGIN FLOW
+    // ---------------------------------------------------------
+    const user = await User.findOne({ email: formattedEmail });
     if (!user) {
       return res.status(404).json({ 
         success: false,
@@ -86,34 +131,37 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Normal users ke liye role default to 'user'
+    const userRole = user.role || "user";
+
     const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
+      { id: user._id, role: userRole },
+      JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    // set HttpOnly cookie with the token (secure in production)
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     };
 
     res.cookie('token', token, cookieOptions);
-    res.json({
+    return res.json({
       success: true,
       message: "Login successful",
       token,
       user: {
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        role: userRole // Returns 'user'
       }
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       success: false,
       message: error.message || "Server error during login" 
     });

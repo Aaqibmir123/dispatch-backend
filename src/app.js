@@ -8,6 +8,8 @@ const invoiceRoutes = require("./routes/invoice.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
 const connectDB = require("./config/db");
 const companyRoutes = require("./routes/companyRoutes");
+const appointmentRoutes = require("./routes/appointment.routes");
+const adminRoutes = require("./routes/admin.routes");
 
 const app = express();
 
@@ -22,7 +24,6 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-// 3. 🔥 STRATEGIC OPTIONS OVERRIDE (Moved up before parsing layers)
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Origin", "*");
@@ -44,5 +45,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/company", companyRoutes);
+app.use("/api/appointments", appointmentRoutes);
+app.use("/api/admin", adminRoutes);
 
 module.exports = app;

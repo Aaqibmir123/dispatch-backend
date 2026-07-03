@@ -7,52 +7,15 @@ const mongoose = require("mongoose");
  */
 const tripSchema = new mongoose.Schema(
   {
-    tripDate: {
-      type: Date,
-      required: true,
-    },
-
-    vrid: {
-      type: String,
-      required: true,
-      trim: true,
-      uppercase: true,
-    },
-
-    route: {
-      type: String,
-      trim: true,
-    },
-
-    pickup: {
-      type: String,
-      trim: true,
-    },
-
-    drop: {
-      type: String,
-      trim: true,
-    },
-
-    totalCharges: {
-      type: Number,
-      default: 0,
-    },
-
-    // FIXED: Frontend fields integration fallback map rules
-    dispatchPercent: {
-      type: Number,
-      default: 10,
-    },
-    dispatchPercentage: {
-      type: Number,
-      default: 10,
-    },
-
-    dispatchAmount: {
-      type: Number,
-      default: 0,
-    },
+    tripDate: { type: Date, required: true },
+    vrid: { type: String, required: true, trim: true, uppercase: true },
+    route: { type: String, trim: true },
+    pickup: { type: String, trim: true },
+    drop: { type: String, trim: true },
+    totalCharges: { type: Number, default: 0 },
+    dispatchPercent: { type: Number, default: 10 },
+    dispatchPercentage: { type: Number, default: 10 },
+    dispatchAmount: { type: Number, default: 0 },
   },
   { _id: false }
 );
@@ -64,66 +27,40 @@ const tripSchema = new mongoose.Schema(
  */
 const invoiceSchema = new mongoose.Schema(
   {
-    invoiceNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-
+    invoiceNumber: { type: String, required: true, unique: true },
     invoiceType: {
       type: String,
       enum: ["single", "multiple", "Single", "Multiple"],
       default: "single",
     },
 
-    // FIXED: Dropdown strings normalization sync handle karne ke liye lowercase keys incorporate ki hain
+    // FIXED HERE: Saare valid enums invoiceSchema ke andar add kar diye hain
     invoiceStatus: {
       type: String,
-      enum: ["draft", "sent", "paid", "cancelled", "Draft", "Pending", "Paid", "Cancelled"],
+      enum: ["draft", "sent", "paid", "cancelled", "approved", "rejected", "pending"],
       default: "draft",
-      lowercase: true, // Auto character casing safety conversion layer
+      lowercase: true, // Input string auto-lowercase ho jayegi validation se pehle
     },
 
-    // // VERIFIED STRUCTURE: Invoice period tracker objects
-    // invoicePeriod: {
-    //   startDate: { type: Date },
-    //   endDate: { type: Date },
-    // },
-
-    currency: {
-      type: String,
-      default: "CAD",
-    },
-
+    currency: { type: String, default: "CAD" },
     transitNumber: String,
     institutionNumber: String,
     accountNumber: String,
 
-    /**
-     * -----------------------
-     * PAYEE (YOUR COMPANY)
-     * -----------------------
-     */
     payee: {
       companyName: String,
-      contactPerson: String, 
+      contactPerson: String,
       address1: String,
       address: String,
       phone: String,
       email: String,
       gstNumber: String,
+      eTransferAddress: String,
+      payeeSelectKey: String,
     },
 
-    /**
-     * -----------------------
-     * CUSTOMER DETAILS
-     * -----------------------
-     */
     customer: {
-      customerName: {
-        type: String,
-        required: false,
-      },
+      customerName: { type: String, required: false },
       companyName: String,
       contactPerson: String,
       address1: String,
@@ -132,77 +69,31 @@ const invoiceSchema = new mongoose.Schema(
       gstNumber: String,
     },
 
-    /**
-     * -----------------------
-     * TRIPS
-     * -----------------------
-     */
-    trips: {
-      type: [tripSchema],
-      required: true,
-    },
+    trips: { type: [tripSchema], required: true },
 
-    /**
-     * -----------------------
-     * CALCULATED FIELDS
-     * -----------------------
-     */
-    subtotal: {
-      type: Number,
-      default: 0,
-    },
+    subtotal: { type: Number, default: 0 },
+    tax: { type: Number, default: 0 },
+    grandTotal: { type: Number, default: 0 },
 
-    tax: {
-      type: Number,
-      default: 0,
-    },
-
-    grandTotal: {
-      type: Number,
-      default: 0,
-    },
-
-    /**
-     * -----------------------
-     * FILE & EMAIL TRACKING
-     * -----------------------
-     */
-    pdfUrl: {
-      type: String,
-    },
+    pdfUrl: { type: String },
 
     emailStatus: {
       type: String,
-      enum: ["Pending", "Sent", "Failed", "pending", "sent", "failed"],
+      enum: ["pending", "sent", "failed"],
       default: "pending",
       lowercase: true,
     },
+    emailSentAt: { type: Date },
 
-    emailSentAt: {
-      type: Date,
-    },
-
-    /**
-     * -----------------------
-     * NOTES
-     * -----------------------
-     */
     notes: String,
 
-    /**
-     * -----------------------
-     * RELATION
-     * -----------------------
-     */
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: false, // Testing instances me strict crashes bypass karne ke liye optional rakha hai
+      required: false,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Invoice", invoiceSchema);

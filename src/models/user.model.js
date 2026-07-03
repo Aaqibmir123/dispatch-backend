@@ -7,24 +7,27 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
     email: {
       type: String,
       required: true,
       unique: true,
-      index: true, // 🔥 important for fast lookup
+      index: true,
       lowercase: true,
     },
-
     password: {
       type: String,
       required: true,
+    },
+    // 👈 NEW ROLE FIELD ADDED WITH DEFAULT VALUE
+    role: {
+      type: String,
+      enum: ["user", "admin"], 
+      default: "user", 
     },
   },
   { timestamps: true }
 );
 
-// extra compound index (future scaling)
 userSchema.index({ email: 1 });
 
 module.exports = mongoose.model("User", userSchema);

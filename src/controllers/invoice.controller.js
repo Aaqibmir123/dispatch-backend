@@ -6,6 +6,7 @@ const generateInvoicePDF = require("../services/pdf.service");
 const sendInvoiceEmail = require("../services/email.service");
 
 const createInvoice = async (req, res) => {
+  console.log("🚀 STEP 1: Create Invoice Dispatch Hook Triggered");
   try {
     const data = req.body;
     if (!data?.trips?.length) {

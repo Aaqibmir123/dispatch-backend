@@ -9,7 +9,7 @@ const sendInvoiceEmail = async (emailsList, pdfPath, invoiceNumber) => {
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, // Aapka dynamic 16-digit App Password
+        pass: process.env.EMAIL_PASS,
       },
     });
 
@@ -19,7 +19,25 @@ const sendInvoiceEmail = async (emailsList, pdfPath, invoiceNumber) => {
       from: `"Dispatch Group Billing" <${process.env.EMAIL_USER}>`,
       to: finalRecipients, 
       subject: `Invoice #${invoiceNumber} Generated — Dispatch Group`,
-      text: `Hello,\n\nPlease find attached your professional copy of Invoice #${invoiceNumber}.\n\nThank you for business!`,
+      text: `Hello,\n\nPlease find attached your professional copy of Invoice #${invoiceNumber}.\n\nPayment Methods:\n- Direct Deposit: See attached PDF for banking details\n- E-Transfer: See attached PDF for E-Transfer email address\n\nThank you for business!`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #334155;">
+          <h2 style="color: #1e3a8a; margin-bottom: 10px;">Invoice #${invoiceNumber}</h2>
+          <p style="font-size: 14px; line-height: 1.6;">Hello,</p>
+          <p style="font-size: 14px; line-height: 1.6;">Please find attached your professional copy of Invoice #${invoiceNumber}.</p>
+          
+          <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <h3 style="color: #1e3a8a; margin: 0 0 10px 0; font-size: 14px;">Payment Methods Available:</h3>
+            <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+              <li><strong>Direct Deposit:</strong> See attached PDF for complete banking details</li>
+              <li><strong>💥 E-Transfer:</strong> See attached PDF for E-Transfer email address</li>
+            </ul>
+          </div>
+          
+          <p style="font-size: 14px; line-height: 1.6;">Thank you for your business!</p>
+          <p style="font-size: 12px; color: #64748b; margin-top: 20px;">— Dispatch Group Billing Team</p>
+        </div>
+      `,
       attachments: [
         {
           filename: `invoice-${invoiceNumber}.pdf`,
